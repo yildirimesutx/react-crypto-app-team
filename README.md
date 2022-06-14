@@ -1,70 +1,109 @@
-# Getting Started with Create React App
+# React içinden fetch() ve axios ile veri almak
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+API'den veri almak asekron bir işlemdir, sayfa render edilirken veride aynı zamanda gelebilir.
 
-## Available Scripts
+useEffect hook u içinde axios ve fecth kullanıyoruz
 
-In the project directory, you can run:
+calback func ve dibendis alıyor içerisine
 
-### `npm start`
+***fetch kullanımı =>
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+fetch react yapısı içinde olan özellik,kuruluma ihtiyacı yok
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=INR&order=market_cap_desc&per_page=100&page=1&sparkline=false')
+   .then(response => response.json())
+   .then( response=> console.log(response))
 
-### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---burada fetch içerisinden promis  olarak dönen veriyi json şekl,nde alabilmek için fetch in bir özelliği olan json ile then içerisinde çağırdık,
+ikinci seferde json veriyi göstermek için kullandık,,
 
-### `npm run build`
+bu verileri sayfada göstermek için yakalamamız ve hafızaya almamız gerekiyor,
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+bu işlem için useState() hook unu kullanıyoruz.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+const [coin, setCoin] = useState() 
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+buradaki;
+coin => state tutacak değer,
+setCoin=> state değiştirecek fonksiyon
 
-### `npm run eject`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+bu bilgileri ekrana yazdırmak için gelen verinin içerisine map ile giriyoruz ve 
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+ {
+   coin.map(coins=>{
+     return (<div key={coins.id}> 
+         <img src={coins.image} alt="" style={{width :'20px'}} />
+         {coins.name}
+         <hr />
+     </div>
+   )})
+ }
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+*** axios kullanımı => 
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
 
-## Learn More
+ 
+axios kullanabilmek için import ve install edilmesi gerekiyor 
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+npm install axios
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+useEffect(() =>{
 
-### Code Splitting
+axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=INR&order=market_cap_desc&per_page=100&page=1&sparkline=false')
+.then(response => setCoin(response.data))
+.catch(error => console.log({error}));
+}, [])
+burada gelen response data ile yakaladık
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+ {
+   coin.map(coins=>{
+     return (<div key={coins.id}> 
+         <img src={coins.image} alt="" style={{width :'20px'}} />
+         {coins.name}
+         <hr />
+     </div>
+   )})
+ }
 
-### Analyzing the Bundle Size
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+*** bir değişkene atayarak yapma
 
-### Deployment
+ const getCoin = ()=> axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=INR&order=market_cap_desc&per_page=100&page=1&sparkline=false')
+ .then(res=>{
+    setCoin(res.data)
+    // console.log(res.data[0].name)
+ }) 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
 
-### `npm run build` fails to minify
+  burada  değişkene atandığnda then kullanılmasaydı, async await kullanılması gerekirdi. 
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+  ayrıca useEffect içinde promis yapısı kullanılmıyor yanı, useEffect içinde async await yapısı kullanmıyoruz.
+
+useEffect(() => {
+  getCoin()
+}, [])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+kaynakça: 
+
+1. https://medium.com/kocsistem/a-dan-z-ye-react-facce30533d0
+
+2. https://www.youtube.com/watch?v=jNwU5gcrIrg&ab_channel=ReactDersleri
