@@ -5,7 +5,7 @@ const Main = () => {
     <div>
         
         
-    Main
+  
 
 
 
